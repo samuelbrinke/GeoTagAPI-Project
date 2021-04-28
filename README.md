@@ -1,4 +1,4 @@
-# GeoTagAPI-Project
+# GeoTagAPI-Project V1
 ## Vad som behövs
 ## Controller för endpoints (GeoTagController).
 - [ ] Hämta alla taggar (GET ALL)
