@@ -7,18 +7,19 @@
 
 ## Modell till databasen.
 **GeoMessage**
-- [ ] Message String
-- [ ] Longitude Double
-- [ ] Latitude Double
+- [x] Message String
+- [x] Longitude Double
+- [x] Latitude Double
 
 **User**
-- [ ] Firstname
-- [ ] lastname
+- [x] Firstname
+- [x] Lastname
 
 ## Context till databasen (GeoTagDbContext).
-- [ ] Seeding
+- [x] Seeding
 
 Använda API KEYS
 
 ## BONUS
 - [ ] Kunna söka på användare och se alla användarens taggar.
+- [ ] Kunna ta bort taggar.
