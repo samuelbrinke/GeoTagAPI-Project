@@ -1,7 +1,11 @@
+using GeoTagAPI_Project.Data;
+using GeoTagAPI_Project.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -32,6 +36,13 @@ namespace GeoTagAPI_Project
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "GeoTagAPI_Project", Version = "v1" });
             });
+
+            services.AddDbContext<GeoTagDbContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("GeoTagDbContextConnection")));
+
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<GeoTagDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +59,7 @@ namespace GeoTagAPI_Project
 
             app.UseRouting();
 
+            //app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
