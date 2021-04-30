@@ -32,7 +32,7 @@ namespace GeoTagAPI_Project.Controllers
             return Ok(geoMessage);
         }
 
-        [Authorize]
+        [Authorize(Policy = "EmployeeOnly")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GeoMessage>>> GetGeoMessages()
         {

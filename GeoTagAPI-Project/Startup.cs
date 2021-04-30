@@ -46,6 +46,11 @@ namespace GeoTagAPI_Project
             services.AddDefaultIdentity<User>()
                 .AddEntityFrameworkStores<GeoTagDbContext>();
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("EmployeeOnly", policy => policy.RequireClaim("EmployeeNumber"));
+            });
+
             services.AddAuthentication("ApiTokenScheme")
                 .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>("ApiTokenScheme", null);
         }
