@@ -1,5 +1,7 @@
+using GeoTagAPI_Project.ApiKey;
 using GeoTagAPI_Project.Data;
 using GeoTagAPI_Project.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -41,8 +43,11 @@ namespace GeoTagAPI_Project
                 options.UseSqlServer(
                     Configuration.GetConnectionString("GeoTagDbContextConnection")));
 
-            services.AddIdentity<User, IdentityRole>()
+            services.AddDefaultIdentity<User>()
                 .AddEntityFrameworkStores<GeoTagDbContext>();
+
+            services.AddAuthentication("ApiTokenScheme")
+                .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>("ApiTokenScheme", null);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,7 +64,7 @@ namespace GeoTagAPI_Project
 
             app.UseRouting();
 
-            //app.UseAuthentication();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

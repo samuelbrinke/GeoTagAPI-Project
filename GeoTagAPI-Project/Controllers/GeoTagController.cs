@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GeoTagAPI_Project.Models;
 using GeoTagAPI_Project.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GeoTagAPI_Project.Controllers
 {
@@ -31,6 +32,7 @@ namespace GeoTagAPI_Project.Controllers
             return Ok(geoMessage);
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GeoMessage>>> GetGeoMessages()
         {

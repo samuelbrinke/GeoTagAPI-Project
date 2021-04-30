@@ -17,6 +17,7 @@ namespace GeoTagAPI_Project.Data
         }
 
         public DbSet<GeoMessage> GeoMessages { get; set; }
+        public DbSet<Token> Tokens { get; set; }
 
         public async Task Seed(UserManager<User> userManager)
         {
@@ -33,6 +34,9 @@ namespace GeoTagAPI_Project.Data
                 Longitude = 182.6
             };
 
+            var token = new Token { Key = new Guid("11223344-5566-7788-99AA-BBCCDDEEFF00"), User = user };
+
+            await AddAsync(token);
             await AddAsync(geoMessage);
             await SaveChangesAsync();
         }
