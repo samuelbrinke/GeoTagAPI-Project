@@ -1,9 +1,9 @@
 # GeoTagAPI-Project V1
 ## Vad som behövs
 ## Controller för endpoints (GeoTagController).
-- [ ] Hämta alla taggar (GET ALL)
-- [ ] Hämta en tagg (GET)
-- [ ] Lägga till en tagg (POST)
+- [x] Hämta alla taggar (GET ALL)
+- [x] Hämta en tagg (GET)
+- [x] Lägga till en tagg (POST)
 
 ## Modell till databasen.
 **GeoMessage**
@@ -18,7 +18,14 @@
 ## Context till databasen (GeoTagDbContext).
 - [x] Seeding
 
+## Automatiserad dokumentation.
+- [ ]
+
 Använda API KEYS
+
+# GeoTagAPI-Project V2
+
+
 
 ## BONUS
 - [ ] Kunna söka på användare och se alla användarens taggar.
