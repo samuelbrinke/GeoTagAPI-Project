@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,9 +33,24 @@ namespace GeoTagAPI_Project
         {
 
             services.AddControllers();
+
+            services.AddApiVersioning(c =>
+            {
+                c.ReportApiVersions = true;
+            });
+
+            services.AddVersionedApiExplorer(c =>
+            {
+                c.GroupNameFormat = "'v'VVV";
+                c.SubstituteApiVersionInUrl = true;
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "GeoTagAPI_Project", Version = "v1" });
+                c.SwaggerDoc("v2", new OpenApiInfo { Title = "GeoTagAPI_Project", Version = "v2" });
+                c.IncludeXmlComments("GeoTagAPI-Project.xml");
+                //c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
             });
 
             services.AddDbContext<GeoTagDbContext>(options =>
@@ -57,7 +71,11 @@ namespace GeoTagAPI_Project
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "GeoTagAPI_Project v1"));
+                app.UseSwaggerUI(c => 
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "GeoTagAPI_Project v1");
+                    c.SwaggerEndpoint("/swagger/v2/swagger.json", "GeoTagAPI_Project v2");
+                });
             }
 
             app.UseHttpsRedirection();
@@ -65,6 +83,7 @@ namespace GeoTagAPI_Project
             app.UseRouting();
 
             app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

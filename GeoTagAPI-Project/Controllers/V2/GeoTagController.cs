@@ -9,10 +9,11 @@ using GeoTagAPI_Project.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 
-namespace GeoTagAPI_Project.Controllers
+namespace GeoTagAPI_Project.Controllers.V2
 {
-    [Route("api/geo-comments")]
+    [Route("api/v{version:apiVersion}/geo-comments")]
     [ApiController]
+    [ApiVersion("2.0")]
     public class GeoTagController : ControllerBase
     {
         private readonly GeoTagDbContext _context;
@@ -32,13 +33,17 @@ namespace GeoTagAPI_Project.Controllers
             return Ok(geoMessage);
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GeoMessage>>> GetGeoMessages()
         {
             return await _context.GeoMessages.ToListAsync();
         }
 
+
+        /// <summary>
+        /// Creates a new Geo-Message.
+        /// </summary>
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<GeoMessage>> CreateGeoMessage(GeoMessage geoMessage)
         {
