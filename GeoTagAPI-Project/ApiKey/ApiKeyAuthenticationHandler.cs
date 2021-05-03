@@ -1,6 +1,7 @@
 ﻿using GeoTagAPI_Project.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -27,36 +28,39 @@ namespace GeoTagAPI_Project.ApiKey
             _context = context;
         }
 
-/*        public async Task<IdentityUser> GetUserByTokenAsync(string token)
+        public async Task<IdentityUser> GetUserByTokenAsync(string token)
         {
-            return await _context.ApiTokens.Where(t => t.Value == token)
+            var user = await _context.Tokens.Where(t => t.Key.ToString() == token)
                 .Select(t => t.User)
                 .FirstOrDefaultAsync();
-        }*/
+            return user;
+        }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            const string apikey = "11223344-5566-7788-99AA-BBCCDDEEFF00";
-
             string token = Request.Query["apikey"];
 
+            if (token == null)
+                return AuthenticateResult.Fail("No token");
 
-/*            var claims = new List<Claim> {
+            var user = await GetUserByTokenAsync(token);
+
+            if (user == null)
+            {
+                return AuthenticateResult.Fail("Invalid token");
+            }
+
+            var claims = new List<Claim> {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
-            };*/
+                //new Claim("EmployeeNumber", "123")
+            };
 
-            var identity = new ClaimsIdentity(Scheme.Name);
+            var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);
 
-            if (token == apikey)
-            {
-                return AuthenticateResult.Success(ticket);
-            }
-
-
-            return AuthenticateResult.Fail("Invalid token");
+            return AuthenticateResult.Success(ticket);
         }
     }
 }

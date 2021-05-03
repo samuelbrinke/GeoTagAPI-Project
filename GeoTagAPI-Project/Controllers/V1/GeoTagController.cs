@@ -33,6 +33,7 @@ namespace GeoTagAPI_Project.Controllers.V1
             return Ok(geoMessage);
         }
 
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GeoMessage>>> GetGeoMessages()
         {
