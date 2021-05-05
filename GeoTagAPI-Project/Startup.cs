@@ -60,7 +60,8 @@ namespace GeoTagAPI_Project
                 options.UseSqlServer(
                     Configuration.GetConnectionString("GeoTagDbContextConnection")));
 
-            services.AddDefaultIdentity<User>()
+
+            services.AddIdentityCore<User>()
                 .AddEntityFrameworkStores<GeoTagDbContext>();
 
 

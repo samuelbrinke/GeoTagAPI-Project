@@ -1,4 +1,5 @@
 ﻿using GeoTagAPI_Project.Models;
+using GeoTagAPI_Project.Models.V2;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -24,19 +25,32 @@ namespace GeoTagAPI_Project.Data
             await Database.EnsureDeletedAsync();
             await Database.EnsureCreatedAsync();
 
-            var user = new User { UserName = "Test", Firstname = "John", Lastname = "Doe" };
-            await userManager.CreateAsync(user);
+            var users = new List<User>() 
+            {
+                new User { UserName = "Test", Firstname = "John", Lastname = "Doe" },
+                new User { UserName = "Test2", Firstname = "Björn", Lastname = "Doe" }
+            };
+
+            foreach (var user in users)
+            {
+                await userManager.CreateAsync(user);
+            }
 
             var geoMessage = new GeoMessage
             {
-                Message = "Hallo",
+                Message = new Message {Title = "Hejhej", Body = "Hallo", Author = users[0].Firstname + " " + users[0].Lastname},
                 Latitude = 50.2,
                 Longitude = 182.6
             };
 
-            var token = new Token { Key = new Guid("11223344-5566-7788-99AA-BBCCDDEEFF00"), User = user };
+            var tokens = new List<Token> () 
+            { 
+                new Token { Key = new Guid("11223344-5566-7788-99AA-BBCCDDEEFF00"), User = users[0] },
+                new Token { Key = new Guid("00000000-0000-0000-0000-000000000000"), User = users[1] }
+            };
+            
 
-            await AddAsync(token);
+            await AddRangeAsync(tokens);
             await AddAsync(geoMessage);
             await SaveChangesAsync();
         }
