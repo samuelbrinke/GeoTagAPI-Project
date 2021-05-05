@@ -8,6 +8,8 @@ using GeoTagAPI_Project.Models;
 using GeoTagAPI_Project.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using GeoTagAPI_Project.Dtos.V2;
+using Microsoft.AspNetCore.Identity;
 
 namespace GeoTagAPI_Project.Controllers.V2
 {
@@ -17,26 +19,48 @@ namespace GeoTagAPI_Project.Controllers.V2
     public class GeoTagController : ControllerBase
     {
         private readonly GeoTagDbContext _context;
-        public GeoTagController(GeoTagDbContext context)
+        private readonly UserManager<User> _userManager;
+        public GeoTagController(GeoTagDbContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<GeoMessage>> GetGeoMessage(int id)
+        public async Task<ActionResult<GeoMessageDto>> GetGeoMessage(int id)
         {
-            var geoMessage = await _context.GeoMessages.FindAsync(id);
+            var geoMessage = await _context.GeoMessages.Include(g => g.Message).FirstOrDefaultAsync(g => g.Id == id);
 
             if (geoMessage == null)
                 return NotFound();
 
-            return Ok(geoMessage);
+            var geoMessageDto = new GeoMessageDto
+            {
+                Id = geoMessage.Id,
+                Message = geoMessage.Message,
+                Latitude = geoMessage.Latitude,
+                Longitude = geoMessage.Longitude
+            };
+
+            return Ok(geoMessageDto);
         }
 
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GeoMessage>>> GetGeoMessages()
+        public async Task<ActionResult<IEnumerable<GeoMessageDto>>> GetGeoMessages()
         {
-            return await _context.GeoMessages.ToListAsync();
+            return await _context.GeoMessages
+                .Include(g => g.Message)
+                .Select(g =>
+                    new GeoMessageDto
+                    {
+                        Id = g.Id,
+                        Message = g.Message,
+                        Latitude = g.Latitude,
+                        Longitude = g.Longitude
+                    }
+                )
+                .ToListAsync();
         }
 
 
@@ -45,15 +69,21 @@ namespace GeoTagAPI_Project.Controllers.V2
         /// </summary>
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<GeoMessage>> CreateGeoMessage(GeoMessage geoMessage)
+        public async Task<ActionResult<GeoMessageDto>> CreateGeoMessage(GeoMessageDto geoMessageDto)
         {
+            var user = await _userManager.GetUserAsync(this.User);
             var newGeoMessage = new GeoMessage
             {
-                Message = geoMessage.Message,
-                Latitude = geoMessage.Latitude,
-                Longitude = geoMessage.Longitude
+                Message = new Message
+                {
+                    Title = geoMessageDto.Message.Title,
+                    Body = geoMessageDto.Message.Body,
+                    Author = $"{user.Firstname} {user.Lastname}"
+                },
+                Latitude = geoMessageDto.Latitude,
+                Longitude = geoMessageDto.Longitude
             };
-            
+
             await _context.AddAsync(newGeoMessage);
             await _context.SaveChangesAsync();
 

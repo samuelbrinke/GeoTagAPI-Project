@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GeoTagAPI-Project</name>
+    </assembly>
+    <members>
+        <member name="M:GeoTagAPI_Project.Controllers.V1.GeoTagController.CreateGeoMessage(GeoTagAPI_Project.Dtos.V1.GeoMessageDto)">
+            <summary>
+            Creates a new Geo-Message.
+            </summary>
+        </member>
+        <member name="M:GeoTagAPI_Project.Controllers.V2.GeoTagController.CreateGeoMessage(GeoTagAPI_Project.Dtos.V2.GeoMessageDto)">
+            <summary>
+            Creates a new Geo-Message.
+            </summary>
+        </member>
+    </members>
+</doc>

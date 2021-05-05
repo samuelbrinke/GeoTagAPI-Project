@@ -11,8 +11,8 @@ namespace GeoTagAPI_Project.Data
 {
     public class GeoTagDbContext : IdentityDbContext<User>
     {
-            public GeoTagDbContext(DbContextOptions<GeoTagDbContext> options)
-            : base(options)
+        public GeoTagDbContext(DbContextOptions<GeoTagDbContext> options)
+        : base(options)
         {
         }
 
@@ -29,7 +29,7 @@ namespace GeoTagAPI_Project.Data
 
             var geoMessage = new GeoMessage
             {
-                Message = "Hallo",
+                Message = new Message { Title = "Hej", Body = "Hallo", Author = user.Firstname + " " + user.Lastname },
                 Latitude = 50.2,
                 Longitude = 182.6
             };
