@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>C:\0\workdir\repos\c#\aspnet.core\web api\GeoTagAPI-Project\GeoTagAPI-Project\GeoTagAPI-Project.xml</DocumentationFile>
+    <DocumentationFile>Documentation.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

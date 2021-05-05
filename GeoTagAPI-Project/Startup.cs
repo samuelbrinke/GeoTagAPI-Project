@@ -4,18 +4,14 @@ using GeoTagAPI_Project.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace GeoTagAPI_Project
 {
@@ -34,24 +30,31 @@ namespace GeoTagAPI_Project
 
             services.AddControllers();
 
-            services.AddApiVersioning(c =>
+
+            services.AddApiVersioning(options =>
             {
-                c.ReportApiVersions = true;
+                options.DefaultApiVersion = new ApiVersion(2,0);
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ReportApiVersions = true;
             });
 
-            services.AddVersionedApiExplorer(c =>
+            services.AddVersionedApiExplorer(options =>
             {
-                c.GroupNameFormat = "'v'VVV";
-                c.SubstituteApiVersionInUrl = true;
+                options.GroupNameFormat = "'v'VVV";
+                options.SubstituteApiVersionInUrl = true;
             });
 
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "GeoTagAPI_Project", Version = "v1" });
                 c.SwaggerDoc("v2", new OpenApiInfo { Title = "GeoTagAPI_Project", Version = "v2" });
-                c.IncludeXmlComments("GeoTagAPI-Project.xml");
+
+                var docsPath = Path.Combine(AppContext.BaseDirectory, "Documentation.xml"); 
+                c.IncludeXmlComments(docsPath);
                 //c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
             });
+
 
             services.AddDbContext<GeoTagDbContext>(options =>
                 options.UseSqlServer(
@@ -59,6 +62,7 @@ namespace GeoTagAPI_Project
 
             services.AddDefaultIdentity<User>()
                 .AddEntityFrameworkStores<GeoTagDbContext>();
+
 
             services.AddAuthorization(options =>
             {
