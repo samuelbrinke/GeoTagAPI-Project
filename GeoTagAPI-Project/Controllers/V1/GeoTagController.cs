@@ -4,11 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GeoTagAPI_Project.Models.V1;
+using GeoTagAPI_Project.Models;
 using GeoTagAPI_Project.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using GeoTagAPI_Project.Dtos;
 
 namespace GeoTagAPI_Project.Controllers.V1
 {

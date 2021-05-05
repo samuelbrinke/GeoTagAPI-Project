@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GeoTagAPI_Project.Models.V2;
+using GeoTagAPI_Project.Models;
 using GeoTagAPI_Project.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
@@ -33,34 +33,31 @@ namespace GeoTagAPI_Project.Controllers.V2
             return Ok(geoMessage);
         }
 
-        /*[HttpGet("{minLon, minLat, maxLon, maxLat}")]
-        public async Task<ActionResult<IEnumerable<GeoMessage>>> GetGeoMessages(double minLon, double minLat, double maxLon, double maxLat)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<GeoMessage>>> GetGeoMessages()
         {
             return await _context.GeoMessages.ToListAsync();
         }
-        */
+
 
         /// <summary>
         /// Creates a new Geo-Message.
         /// </summary>
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<string>> CreateGeoMessage(GeoMessage geoMessage)
+        public async Task<ActionResult<GeoMessage>> CreateGeoMessage(GeoMessage geoMessage)
         {
-
-            /*
             var newGeoMessage = new GeoMessage
             {
                 Message = geoMessage.Message,
                 Latitude = geoMessage.Latitude,
                 Longitude = geoMessage.Longitude
             };
-            */
-            //await _context.AddAsync(newGeoMessage);
-            //await _context.SaveChangesAsync();
             
-            return Ok();
-            //return CreatedAtAction(nameof(GetGeoMessage), new { id = newGeoMessage.Id }, newGeoMessage);
+            await _context.AddAsync(newGeoMessage);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetGeoMessage), new { id = newGeoMessage.Id }, newGeoMessage);
         }
     }
 }
