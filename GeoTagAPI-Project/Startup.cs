@@ -86,6 +86,13 @@ namespace GeoTagAPI_Project
                 });
             }
 
+            app.UseCors(options => options
+            .SetIsOriginAllowed(origin => true)
+            .AllowCredentials()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            );
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
