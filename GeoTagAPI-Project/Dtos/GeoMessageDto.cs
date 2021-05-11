@@ -10,7 +10,6 @@ namespace GeoTagAPI_Project.Dtos
     {
         public class GeoMessageDto
         {
-            public int Id { get; set; }
             public string Message { get; set; }
             public double Longitude { get; set; }
             public double Latitude { get; set; }
@@ -18,12 +17,31 @@ namespace GeoTagAPI_Project.Dtos
     }
     namespace V2
     {
-        public class GeoMessageDto
+        public class GetGeoMessageDto
         {
-            public int Id { get; set; }
-            public Message Message { get; set; }
+            public GetMessageDto Message { get; set; }
             public double Longitude { get; set; }
             public double Latitude { get; set; }
+        }
+
+        public class GetMessageDto
+        {
+            public string Title { get; set; }
+            public string Body { get; set; }
+            public string Author { get; set; }
+        }
+
+        public class AddGeoMessageDto
+        {
+            public AddMessageDto Message { get; set; }
+            public double Longitude { get; set; }
+            public double Latitude { get; set; }
+        }
+
+        public class AddMessageDto
+        {
+            public string Title { get; set; }
+            public string Body { get; set; }
         }
     }
 }

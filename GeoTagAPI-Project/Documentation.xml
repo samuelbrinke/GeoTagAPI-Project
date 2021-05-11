@@ -9,7 +9,7 @@
             Creates a new Geo-Message.
             </summary>
         </member>
-        <member name="M:GeoTagAPI_Project.Controllers.V2.GeoTagController.CreateGeoMessage(GeoTagAPI_Project.Dtos.V2.GeoMessageDto)">
+        <member name="M:GeoTagAPI_Project.Controllers.V2.GeoTagController.CreateGeoMessage(GeoTagAPI_Project.Dtos.V2.AddGeoMessageDto)">
             <summary>
             Creates a new Geo-Message.
             </summary>

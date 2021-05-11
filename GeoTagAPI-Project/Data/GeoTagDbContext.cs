@@ -29,7 +29,9 @@ namespace GeoTagAPI_Project.Data
 
             var geoMessage = new GeoMessage
             {
-                Message = new Message { Title = "Hej", Body = "Hallo", Author = user.Firstname + " " + user.Lastname },
+                Title = "Hej",
+                Body = "Hallo",
+                Author = user.Firstname + " " + user.Lastname,
                 Latitude = 50.2,
                 Longitude = 182.6
             };

@@ -27,40 +27,44 @@ namespace GeoTagAPI_Project.Controllers.V2
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<GeoMessageDto>> GetGeoMessage(int id)
+        public async Task<ActionResult<GetGeoMessageDto>> GetGeoMessage(int id)
         {
-            var geoMessage = await _context.GeoMessages.Include(g => g.Message).FirstOrDefaultAsync(g => g.Id == id);
+            var geoMessage = await _context.GeoMessages.FirstOrDefaultAsync(g => g.Id == id);
 
             if (geoMessage == null)
                 return NotFound();
 
-            var geoMessageDto = new GeoMessageDto
+            var geoMessageDto = new GetGeoMessageDto
             {
-                Id = geoMessage.Id,
-                Message = geoMessage.Message,
-                Latitude = geoMessage.Latitude,
-                Longitude = geoMessage.Longitude
+                Message = new GetMessageDto { Title = geoMessage.Title, Body = geoMessage.Body, Author = geoMessage.Author },
+                Longitude = geoMessage.Longitude,
+                Latitude = geoMessage.Latitude
             };
 
             return Ok(geoMessageDto);
         }
 
-
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GeoMessageDto>>> GetGeoMessages()
+        public async Task<ActionResult<IEnumerable<GetGeoMessageDto>>> GetGeoMessagesQuery([FromQuery] double minLon, [FromQuery] double minLat, [FromQuery] double maxLon, [FromQuery] double maxLat)
         {
-            return await _context.GeoMessages
-                .Include(g => g.Message)
+            var geoMessages = await _context.GeoMessages
                 .Select(g =>
-                    new GeoMessageDto
+                    new GetGeoMessageDto
                     {
-                        Id = g.Id,
-                        Message = g.Message,
-                        Latitude = g.Latitude,
-                        Longitude = g.Longitude
+                        Message = new GetMessageDto { Title = g.Title, Body = g.Body, Author = g.Author },
+                        Longitude = g.Longitude,
+                        Latitude = g.Latitude
                     }
                 )
                 .ToListAsync();
+
+            if (Request.Query.ContainsKey("minLon") && Request.Query.ContainsKey("minLat") && Request.Query.ContainsKey("maxLon") && Request.Query.ContainsKey("maxLat"))
+                geoMessages = geoMessages.Where(g =>
+                    g.Longitude > minLon && g.Longitude < maxLon &&
+                    g.Latitude > minLat && g.Latitude < maxLat
+                ).ToList();
+
+            return geoMessages;
         }
 
 
@@ -69,25 +73,28 @@ namespace GeoTagAPI_Project.Controllers.V2
         /// </summary>
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<GeoMessageDto>> CreateGeoMessage(GeoMessageDto geoMessageDto)
+        public async Task<ActionResult<GetGeoMessageDto>> CreateGeoMessage(AddGeoMessageDto addGeoMessage)
         {
             var user = await _userManager.GetUserAsync(this.User);
             var newGeoMessage = new GeoMessage
             {
-                Message = new Message
-                {
-                    Title = geoMessageDto.Message.Title,
-                    Body = geoMessageDto.Message.Body,
-                    Author = $"{user.Firstname} {user.Lastname}"
-                },
-                Latitude = geoMessageDto.Latitude,
-                Longitude = geoMessageDto.Longitude
+                Title = addGeoMessage.Message.Title,
+                Body = addGeoMessage.Message.Body,
+                Author = $"{user.Firstname} {user.Lastname}",
+                Longitude = addGeoMessage.Longitude,
+                Latitude = addGeoMessage.Latitude
             };
 
             await _context.AddAsync(newGeoMessage);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetGeoMessage), new { id = newGeoMessage.Id }, newGeoMessage);
+            var getGeoMessage = new GetGeoMessageDto
+            {
+                Message = new GetMessageDto { Title = newGeoMessage.Title, Body = newGeoMessage.Body, Author = newGeoMessage.Author },
+                Longitude = newGeoMessage.Longitude,
+                Latitude = newGeoMessage.Latitude
+            };
+            return CreatedAtAction(nameof(GetGeoMessage), new { id = newGeoMessage.Id }, getGeoMessage);
         }
     }
 }

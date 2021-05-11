@@ -29,17 +29,17 @@ namespace GeoTagAPI_Project.Controllers.V1
         [HttpGet("{id}")]
         public async Task<ActionResult<GeoMessageDto>> GetGeoMessage(int id)
         {
-            var geoMessage = await _context.GeoMessages.Include(g => g.Message).FirstOrDefaultAsync(g => g.Id == id);
+            var geoMessage = await _context.GeoMessages.FirstOrDefaultAsync(g => g.Id == id);
 
             if (geoMessage == null)
                 return NotFound();
 
             var geoMessageDto = new GeoMessageDto
             {
-                Id = geoMessage.Id,
-                Message = geoMessage.Message.Body,
-                Latitude = geoMessage.Latitude,
-                Longitude = geoMessage.Longitude
+                Message = geoMessage.Body,
+                Longitude = geoMessage.Longitude,
+                Latitude = geoMessage.Latitude
+                
             };
 
             return Ok(geoMessageDto);
@@ -50,14 +50,12 @@ namespace GeoTagAPI_Project.Controllers.V1
         public async Task<ActionResult<IEnumerable<GeoMessageDto>>> GetGeoMessages()
         {
             return await _context.GeoMessages
-                .Include(g => g.Message)
                 .Select(g =>
                     new GeoMessageDto
                     {
-                        Id = g.Id,
-                        Message = g.Message.Body,
-                        Latitude = g.Latitude,
-                        Longitude = g.Longitude
+                        Message = g.Body,
+                        Longitude = g.Longitude,
+                        Latitude = g.Latitude
                     }
                 )
                 .ToListAsync();
@@ -74,19 +72,23 @@ namespace GeoTagAPI_Project.Controllers.V1
             var user = await _userManager.GetUserAsync(this.User);
             var newGeoMessage = new GeoMessage
             {
-                Message = new Message
-                {
-                    Body = geoMessageDto.Message,
-                    Author = $"{user.Firstname} {user.Lastname}"
-                },
-                Latitude = geoMessageDto.Latitude,
-                Longitude = geoMessageDto.Longitude
+                Body = geoMessageDto.Message,
+                Author = $"{user.Firstname} {user.Lastname}",
+                Longitude = geoMessageDto.Longitude,
+                Latitude = geoMessageDto.Latitude
             };
 
             await _context.AddAsync(newGeoMessage);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetGeoMessage), new { id = newGeoMessage.Id }, new { newGeoMessage.Id, Message = newGeoMessage.Message.Body, newGeoMessage.Longitude, newGeoMessage.Latitude });
+            var getGeoMessage = new GeoMessageDto
+            {
+                Message = newGeoMessage.Body,
+                Longitude = newGeoMessage.Longitude,
+                Latitude = newGeoMessage.Latitude
+            };
+
+            return CreatedAtAction(nameof(GetGeoMessage), new { id = newGeoMessage.Id }, getGeoMessage);
         }
 
     }
